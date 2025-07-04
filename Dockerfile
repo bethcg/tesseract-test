@@ -1,52 +1,60 @@
-########################################################
-#        Renku install section - do not edit           #
+# Debian 12 aka Bookworm
+FROM debian:12
 
-FROM renku/renkulab-py:3.10-0.24.0 as builder
+ARG TESSERACT_VERSION="main"
+ARG TESSERACT_URL="https://api.github.com/repos/tesseract-ocr/tesseract/tarball/$TESSERACT_VERSION"
 
-# RENKU_VERSION determines the version of the renku CLI
-# that will be used in this image. To find the latest version,
-# visit https://pypi.org/project/renku/#history.
-ARG RENKU_VERSION=2.9.4
+# install basic tools
+RUN apt-get update && apt-get install --no-install-recommends --yes \
+    apt-transport-https \
+    asciidoc \
+    automake \
+    bash \
+    ca-certificates \
+    curl \
+    docbook-xsl \
+    g++ \
+    git \
+    libleptonica-dev \
+    libtool \
+    libicu-dev \
+    libpango1.0-dev \
+    libcairo2-dev \
+    make \
+    pkg-config \
+    wget \
+    xsltproc \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install renku from pypi or from github if a dev version
-RUN if [ -n "$RENKU_VERSION" ] ; then \
-        source .renku/venv/bin/activate ; \
-        currentversion=$(renku --version) ; \
-        if [ "$RENKU_VERSION" != "$currentversion" ] ; then \
-            pip uninstall renku -y ; \
-            gitversion=$(echo "$RENKU_VERSION" | sed -n "s/^[[:digit:]]\+\.[[:digit:]]\+\.[[:digit:]]\+\(rc[[:digit:]]\+\)*\(\.dev[[:digit:]]\+\)*\(+g\([a-f0-9]\+\)\)*\(+dirty\)*$/\4/p") ; \
-            if [ -n "$gitversion" ] ; then \
-                pip install --no-cache-dir --force "git+https://github.com/SwissDataScienceCenter/renku-python.git@$gitversion" ;\
-            else \
-                pip install --no-cache-dir --force renku==${RENKU_VERSION} ;\
-            fi \
-        fi \
-    fi
-#             End Renku install section                #
-########################################################
+WORKDIR /src
 
-FROM renku/renkulab-py:3.10-0.24.0
+RUN wget -qO tesseract.tar.gz $TESSERACT_URL && \
+    tar -xzf tesseract.tar.gz && \
+    rm tesseract.tar.gz && \
+    mv tesseract-* tesseract
 
-# Uncomment and adapt if code is to be included in the image
-# COPY src /code/src
+WORKDIR /src/tesseract
 
-# Uncomment and adapt if your R or python packages require extra linux (ubuntu) software
-# e.g. the following installs apt-utils and vim; each pkg on its own line, all lines
-# except for the last end with backslash '\' to continue the RUN line
-#
-# USER root
-# RUN apt-get update && \
-#    apt-get install -y --no-install-recommends \
-#    apt-utils \
-#    vim
-# USER ${NB_USER}
+RUN ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install && \
+    ldconfig
 
-# install the python dependencies
-COPY requirements.txt environment.yml /tmp/
-RUN mamba env update -q -f /tmp/environment.yml && \
-    /opt/conda/bin/pip install -r /tmp/requirements.txt --no-cache-dir && \
-    mamba clean -y --all && \
-    mamba env export -n "root" && \
-    rm -rf ${HOME}/.renku/venv
+# go to default traineddata directory
+WORKDIR /usr/local/share/tessdata/
 
-COPY --from=builder ${HOME}/.renku/venv ${HOME}/.renku/venv
+# copy language script and list to image
+COPY get-languages.sh .
+COPY languages.txt .
+
+# make script executable
+RUN chmod +x ./get-languages.sh
+# download traineddata languages
+RUN ./get-languages.sh
+
+# go to user input/output folder
+WORKDIR /tmp/
+
+# CMD ["tesseract", "--version"]
+CMD ["tesseract", "--list-langs"]
