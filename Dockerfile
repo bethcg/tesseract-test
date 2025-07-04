@@ -37,23 +37,6 @@ RUN wget -qO tesseract.tar.gz $TESSERACT_URL && \
     rm tesseract.tar.gz && \
     mv tesseract-* tesseract
 
-WORKDIR /src/tesseract
-
-# go to default traineddata directory
-WORKDIR /usr/local/share/tessdata/
-
-# copy language script and list to image
-COPY get-languages.sh .
-COPY languages.txt .
-
-# make script executable
-RUN chmod +x ./get-languages.sh
-# download traineddata languages
-RUN ./get-languages.sh
-
-# go to user input/output folder
-WORKDIR /tmp/
-
 # install the python dependencies
 COPY requirements.txt environment.yml /tmp/
 RUN mamba env update -q -f /tmp/environment.yml && \
