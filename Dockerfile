@@ -38,9 +38,7 @@ RUN sudo dpkg -i cuda-keyring_1.1-1_all.deb
 RUN sudo apt-get update
 RUN sudo apt-get install tesseract-ocr --yes
 RUN sudo apt-get install libtesseract-dev --yes
-RUN sudo apt-get install  tesseract-ocr-deu --yes
-RUN sudo apt-get install  tesseract-ocr-deu-frak --yes
-RUN sudo apt-get install tesseract-ocr-latf --yes
+RUN sudo apt-get install tesseract-ocr-deu --yes
 RUN sudo apt-get install cuda-toolkit-12-1 --yes
 
 USER ${NB_USER}
