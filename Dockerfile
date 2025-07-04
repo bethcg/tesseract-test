@@ -32,11 +32,14 @@ ARG TESSERACT_URL="https://api.github.com/repos/tesseract-ocr/tesseract/tarball/
 
 USER root
 
-RUN wget -qO tesseract.tar.gz $TESSERACT_URL && \
-    tar -xzf tesseract.tar.gz && \
-    rm tesseract.tar.gz && \
-    mv tesseract-* tesseract
-
+RUN apt-get update && \
+    apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    tesseract-ocr-deu \
+    tesseract-ocr-deu-frak \
+    tesseract-ocr-latf
+    
 USER ${NB_USER}
 
 # install the python dependencies
