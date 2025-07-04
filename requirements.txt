@@ -1,11 +1,22 @@
-pandas
-numpy
-scipy
-scikit-learn
-plotly
-torch
-transformers
-pytorch-lightning
-matplotlib
-seaborn
-tqdm
+# General
+jupyter
+python-dotenv
+pdf2image
+numpy<2
+pillow
+requests
+
+# OpenAI
+openai
+
+# MistralAI
+mistralai
+
+# Gemini
+google-generativeai
+
+# tesseract
+pytesseract
+
+# Levenshtein (edit) distance
+levenshtein
