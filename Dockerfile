@@ -30,8 +30,6 @@ FROM renku/renkulab-py:3.10-0.24.0
 ARG TESSERACT_VERSION="main"
 ARG TESSERACT_URL="https://api.github.com/repos/tesseract-ocr/tesseract/tarball/$TESSERACT_VERSION"
 
-WORKDIR /src
-
 USER root
 
 RUN wget -qO tesseract.tar.gz $TESSERACT_URL && \
