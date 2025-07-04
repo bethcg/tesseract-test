@@ -33,13 +33,10 @@ ARG TESSERACT_URL="https://api.github.com/repos/tesseract-ocr/tesseract/tarball/
 USER root
 
 RUN apt-get install wget
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-keyring_1.1-1_all.deb
-RUN sudo dpkg -i cuda-keyring_1.1-1_all.deb
 RUN sudo apt-get update
 RUN sudo apt-get install tesseract-ocr --yes
 RUN sudo apt-get install libtesseract-dev --yes
 RUN sudo apt-get install tesseract-ocr-deu --yes
-RUN sudo apt-get install cuda-toolkit-12-1 --yes
 
 USER ${NB_USER}
 
