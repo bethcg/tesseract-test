@@ -39,12 +39,6 @@ RUN wget -qO tesseract.tar.gz $TESSERACT_URL && \
 
 WORKDIR /src/tesseract
 
-RUN ./autogen.sh && \
-    ./configure && \
-    make && \
-    make install && \
-    ldconfig
-
 # go to default traineddata directory
 WORKDIR /usr/local/share/tessdata/
 
