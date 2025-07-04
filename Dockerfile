@@ -32,8 +32,7 @@ ARG TESSERACT_URL="https://api.github.com/repos/tesseract-ocr/tesseract/tarball/
 
 USER root
 
-RUN apt-get update && \
-    apt-get install -y \
+RUN apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
     tesseract-ocr-deu \
