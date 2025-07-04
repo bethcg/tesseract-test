@@ -32,10 +32,14 @@ ARG TESSERACT_URL="https://api.github.com/repos/tesseract-ocr/tesseract/tarball/
 
 WORKDIR /src
 
+USER root
+
 RUN wget -qO tesseract.tar.gz $TESSERACT_URL && \
     tar -xzf tesseract.tar.gz && \
     rm tesseract.tar.gz && \
     mv tesseract-* tesseract
+
+USER ${NB_USER}
 
 # install the python dependencies
 COPY requirements.txt environment.yml /tmp/
